@@ -1,0 +1,63 @@
+1. OTAZKA:  Vymenujte 6 klauzul prikazu SELECT 
+
+select, from, where, group by, having, order by
+
+2. OTAZKA: Vymenujte 5 prikazov SQL jazyka
+
+select, from, where, group by, having, order by
+
+3. OTAZKA: Ktoru filtracnu podmienku pouzijete vo WHERE klauzule, ak stlpec EDLEVEL moze obsahovat hodnoty 15, 16, 19, 20, 22? Uvedte cely zapis WHERE klauzuly.
+
+where edlevel in (15, 16, 19, 20, 22)
+
+4. OTAZKA: Ako zapisem inner join medzi tabulkami EMPLOYEE a EMP_ACT cez stlpce EMPNO (v oboch tabulkach sa volaju rovnako)   uvedte celu klauzulu FROM s joinom pripadne aj WHERE klauzulu ak treba.
+
+select * from wsqla.employee e 
+join
+wsqla.emp_act ea 
+on e.empno = ea.empno;
+
+5. OTAZKA: Napiste aspon tri porovnavacie operatory ktore sa pouzivaju v klauzule WHERE
+
+=
+<>
+>
+
+6. OTAZKA: Ake datove typy poznate. Vymenujte aspon tri.
+
+smallint, integer, varchar, date, time
+
+1. ULOHA: Uvedte ako by ste vytvorili tabulku EMPLOYEE2 identicku s tabulkou EMPLOYEE
+
+create table w20ks11.employee2 as table wsqla.employee with data;
+
+2. ULOHA: Naplnte tabulku EMPLOYEE2 datami z tabulky employee ale bez MANAGEROV (predpokladame ze tabulka Employee2 uz existuje a ma rovnaku strukturu ako tabulka employee a je prazdna)
+
+insert into w20ks11.employee2 select * from wsqla.employee where job <> 'MANAGER';
+
+3. ULOHA: Zistite ktory zamestnanec v tabulke EMPLOYEE ma najvyssi plat. (uvedte v SELECTE priezvisko a plat)
+
+select lastname, salary from wsqla.employee
+where salary = (select max(salary) from wsqla.employee);
+
+4. ULOHA: Vymazte vsetkych zamestnancov, ktorych priezvisko ma druhe pismeno velke E z tabulky EMPLOYEE2
+
+delete from w20ks11.employee2 where lastname in (select lastname from w20ks11.employee2 where lastname like '_E%');
+
+5. ULOHA (Bonus): Zistite ktore oddelenie ma najvyssi priemerny plat v employee
+
+select workdept, avg(salary) avg_sal from wsqla.employee
+group by workdept
+having avg(salary) = (select max(avg_sal) from (select workdept, avg(salary) avg_sal from wsqla.employee
+group by workdept) avg_sal_dept
+);
+
+6. ULOHA (Bonus): Zistite pocet aktivit pre kazde oddelenie, usporiadajte podla poctu aktivit zostupne.  Pouzite tabulky EMP_ACT, EMPLOYEE. Cislo aktivity je v stlpci
+ACTNO.
+
+select workdept, count(actno) from wsqla.employee e
+left join
+wsqla.emp_act ea 
+on e.empno = ea.empno
+group by workdept
+order by 2 desc;
